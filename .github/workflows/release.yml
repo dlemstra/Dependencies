@@ -1,7 +1,7 @@
 on:
   workflow_dispatch:
 
-name: release
+name: Create release
 jobs:
   build_windows:
     name: Build Windows ${{matrix.platform}} ${{matrix.type}} ${{matrix.openmp}}
@@ -52,10 +52,59 @@ jobs:
           echo Error: robocopy failed with exit code %ERRORLEVEL%
           exit /b 1
         )
-        exit /b 0
+        powershell -Command "Compress-Archive -Path 'Artifacts\*' -DestinationPath '${{ matrix.platform }}-${{ matrix.type }}-${{ matrix.openmp }}.zip'"
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
         name: ${{ matrix.platform }}-${{ matrix.type }}-${{ matrix.openmp }}
-        path: Artifacts
+        path: ${{ matrix.platform }}-${{ matrix.type }}-${{ matrix.openmp }}.zip
+
+  release:
+    name: Create release
+    runs-on: windows-2022
+    needs: build_windows
+
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - uses: actions/download-artifact@v4
+      name: Download executables
+      with:
+        path: ${{ github.workspace }}/Artifacts
+        merge-multiple: true
+
+    - name: Set release number
+      shell: bash
+      run: echo "release=$(date +'%Y.%m.%d.%H%M')" >> $GITHUB_ENV
+
+    - name: Create and push tag
+      shell: bash
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git tag $release
+        git push origin $release
+
+    - name: Publish release
+      uses: softprops/action-gh-release@v2
+      with:
+        name: ${{ env.release }}
+        tag_name: ${{ env.release }}
+        files: |
+          ${{ github.workspace }}/Artifacts/x64-dynamic-noOpenMP.zip
+          ${{ github.workspace }}/Artifacts/x64-dynamic-openMP.zip
+          ${{ github.workspace }}/Artifacts/x64-static-noOpenMP.zip
+          ${{ github.workspace }}/Artifacts/x64-static-openMP.zip
+          ${{ github.workspace }}/Artifacts/arm64-dynamic-noOpenMP.zip
+          ${{ github.workspace }}/Artifacts/arm64-dynamic-openMP.zip
+          ${{ github.workspace }}/Artifacts/arm64-static-noOpenMP.zip
+          ${{ github.workspace }}/Artifacts/arm64-static-openMP.zip
+          ${{ github.workspace }}/Artifacts/x86-dynamic-noOpenMP.zip
+          ${{ github.workspace }}/Artifacts/x86-dynamic-openMP.zip
+          ${{ github.workspace }}/Artifacts/x86-static-noOpenMP.zip
+          ${{ github.workspace }}/Artifacts/x86-static-openMP.zip
