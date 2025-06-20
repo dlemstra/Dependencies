@@ -18,13 +18,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Checkout ImageMagick-Windows
-      uses: actions/checkout@v4
-      with:
-        repository: ImageMagick/ImageMagick-Windows
-        path: ./ImageMagick-Windows
-        ref: refs/heads/new-config
-
     - name: Clone dependencies
       shell: cmd
       run: CloneDependencies.cmd
