@@ -1,7 +1,7 @@
 on:
   workflow_dispatch:
 
-name: relase
+name: release
 jobs:
   build_windows:
     name: Build Windows ${{matrix.platform}} ${{matrix.type}} ${{matrix.openmp}}
