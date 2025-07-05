@@ -13,6 +13,10 @@ jobs:
         architecture: [ x64, arm64, x86 ]
         buildType: [ dynamic, static ]
         openmp: [ openMP, noOpenMP ]
+        unrestricted: [ true, false ]
+
+    env:
+      ARTIFACT_NAME: ${{matrix.architecture}}-${{matrix.buildType}}-${{matrix.openmp}}${{matrix.unrestricted == 'true' && '-unrestricted' || ''}}
 
     steps:
     - name: Checkout
@@ -34,7 +38,7 @@ jobs:
       shell: cmd
       working-directory: ImageMagick-Windows\Configure
       run: |
-        Configure.Release.x64.exe /noWizard /VS2022 /${{matrix.architecture}} /${{matrix.buildType}} /${{matrix.openmp}}
+        Configure.Release.x64.exe /noWizard /VS2022 /${{matrix.architecture}} /${{matrix.buildType}} /${{matrix.openmp}} ${{matrix.unrestricted == 'true' && '/includeOptional /incompatibleLicense' || ''}}
 
     - name: Build dependencies
       shell: cmd
@@ -52,13 +56,13 @@ jobs:
           echo Error: robocopy failed with exit code %ERRORLEVEL%
           exit /b 1
         )
-        powershell -Command "Compress-Archive -Path 'Artifacts\*' -DestinationPath '${{matrix.architecture}}-${{matrix.buildType}}-${{matrix.openmp}}.zip'"
+        powershell -Command "Compress-Archive -Path 'Artifacts\*' -DestinationPath '${{ env.ARTIFACT_NAME }}.zip'"
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: ${{matrix.architecture}}-${{matrix.buildType}}-${{matrix.openmp}}
-        path: ${{matrix.architecture}}-${{matrix.buildType}}-${{matrix.openmp}}.zip
+        name: ${{ env.ARTIFACT_NAME }}
+        path: ${{ env.ARTIFACT_NAME }}.zip
 
   release:
     name: Create release
@@ -108,3 +112,15 @@ jobs:
           ${{ github.workspace }}/Artifacts/x86-dynamic-openMP.zip
           ${{ github.workspace }}/Artifacts/x86-static-noOpenMP.zip
           ${{ github.workspace }}/Artifacts/x86-static-openMP.zip
+          ${{ github.workspace }}/Artifacts/x64-dynamic-noOpenMP-unrestricted.zip
+          ${{ github.workspace }}/Artifacts/x64-dynamic-openMP-unrestricted.zip
+          ${{ github.workspace }}/Artifacts/x64-static-noOpenMP-unrestricted.zip
+          ${{ github.workspace }}/Artifacts/x64-static-openMP-unrestricted.zip
+          ${{ github.workspace }}/Artifacts/arm64-dynamic-noOpenMP-unrestricted.zip
+          ${{ github.workspace }}/Artifacts/arm64-dynamic-openMP-unrestricted.zip
+          ${{ github.workspace }}/Artifacts/arm64-static-noOpenMP-unrestricted.zip
+          ${{ github.workspace }}/Artifacts/arm64-static-openMP-unrestricted.zip
+          ${{ github.workspace }}/Artifacts/x86-dynamic-noOpenMP-unrestricted.zip
+          ${{ github.workspace }}/Artifacts/x86-dynamic-openMP-unrestricted.zip
+          ${{ github.workspace }}/Artifacts/x86-static-noOpenMP-unrestricted.zip
+          ${{ github.workspace }}/Artifacts/x86-static-openMP-unrestricted.zip
