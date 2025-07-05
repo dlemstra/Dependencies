@@ -13,7 +13,7 @@ jobs:
         architecture: [ x64, arm64, x86 ]
         buildType: [ dynamic, static ]
         openmp: [ openMP, noOpenMP ]
-        unrestricted: [ true, false ]
+        unrestricted: [ false, true ]
 
     env:
       ARTIFACT_NAME: windows-${{matrix.architecture}}-${{matrix.buildType}}-${{matrix.openmp}}${{matrix.unrestricted == true && '-unrestricted' || ''}}
