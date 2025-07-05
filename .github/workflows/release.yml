@@ -4,7 +4,7 @@ on:
 name: Create release
 jobs:
   build_windows:
-    name: Build Windows ${{matrix.architecture}} ${{matrix.buildType}} ${{matrix.openmp}} ${{matrix.unrestricted == 'true' && 'unrestricted' || ''}}
+    name: Build Windows ${{matrix.architecture}} ${{matrix.buildType}} ${{matrix.openmp}} ${{matrix.unrestricted == true && 'unrestricted' || ''}}
     runs-on: windows-2022
 
     strategy:
@@ -16,7 +16,7 @@ jobs:
         unrestricted: [ true, false ]
 
     env:
-      ARTIFACT_NAME: windows-${{matrix.architecture}}-${{matrix.buildType}}-${{matrix.openmp}}${{matrix.unrestricted == 'true' && '-unrestricted' || ''}}
+      ARTIFACT_NAME: windows-${{matrix.architecture}}-${{matrix.buildType}}-${{matrix.openmp}}${{matrix.unrestricted == true && '-unrestricted' || ''}}
 
     steps:
     - name: Checkout
@@ -38,7 +38,7 @@ jobs:
       shell: cmd
       working-directory: ImageMagick-Windows\Configure
       run: |
-        Configure.Release.x64.exe /noWizard /VS2022 /${{matrix.architecture}} /${{matrix.buildType}} /${{matrix.openmp}} ${{matrix.unrestricted == 'true' && '/includeOptional /incompatibleLicense' || ''}}
+        Configure.Release.x64.exe /noWizard /VS2022 /${{matrix.architecture}} /${{matrix.buildType}} /${{matrix.openmp}} ${{matrix.unrestricted == true && '/includeOptional /incompatibleLicense' || ''}}
 
     - name: Build dependencies
       shell: cmd
