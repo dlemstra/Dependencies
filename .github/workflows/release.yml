@@ -4,7 +4,7 @@ on:
 name: Create release
 jobs:
   build_windows:
-    name: Build Windows ${{matrix.architecture}} ${{matrix.buildType}} ${{matrix.openmp}}
+    name: Build Windows ${{matrix.architecture}} ${{matrix.buildType}} ${{matrix.openmp}} ${{matrix.unrestricted == 'true' && 'unrestricted' || ''}}
     runs-on: windows-2022
 
     strategy:
@@ -16,7 +16,7 @@ jobs:
         unrestricted: [ true, false ]
 
     env:
-      ARTIFACT_NAME: ${{matrix.architecture}}-${{matrix.buildType}}-${{matrix.openmp}}${{matrix.unrestricted == 'true' && '-unrestricted' || ''}}
+      ARTIFACT_NAME: windows-${{matrix.architecture}}-${{matrix.buildType}}-${{matrix.openmp}}${{matrix.unrestricted == 'true' && '-unrestricted' || ''}}
 
     steps:
     - name: Checkout
