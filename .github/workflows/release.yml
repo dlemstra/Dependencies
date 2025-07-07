@@ -56,6 +56,9 @@ jobs:
           echo Error: robocopy failed with exit code %ERRORLEVEL%
           exit /b 1
         )
+        for %%F in ("Artifacts\lib\*.lib") do (
+          echo %%~nxF >> "Artifacts\pre-build-libs.txt"
+        )
         powershell -Command "Compress-Archive -Path 'Artifacts\*' -DestinationPath '${{ env.ARTIFACT_NAME }}.zip'"
 
     - name: Upload artifacts
