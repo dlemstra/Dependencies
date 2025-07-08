@@ -4,7 +4,7 @@ on:
 name: Create release
 jobs:
   build_windows:
-    name: Build Windows ${{matrix.architecture}} ${{matrix.buildType}} ${{matrix.openmp}} ${{matrix.all == true && 'all' || ''}}
+    name: Build Windows ${{matrix.architecture}} ${{matrix.buildType}} ${{matrix.openmp}} ${{matrix.all == true && 'all' || ''}} ${{matrix.linkRuntime == true && 'link runtime' || ''}}
     runs-on: windows-2022
 
     strategy:
@@ -13,10 +13,16 @@ jobs:
         architecture: [ x64, arm64, x86 ]
         buildType: [ dynamic, static ]
         openmp: [ openMP, noOpenMP ]
+        linkRuntime: [ true, false ]
         all: [ false, true ]
+        exclude:
+          - buildType: dynamic
+            linkRuntime: true
+          - all: true
+            linkRuntime: true
 
     env:
-      ARTIFACT_NAME: windows-${{matrix.architecture}}-${{matrix.buildType}}-${{matrix.openmp}}${{matrix.all == true && '-all' || ''}}
+      ARTIFACT_NAME: windows-${{matrix.architecture}}-${{matrix.buildType}}-${{matrix.openmp}}${{matrix.all == true && '-all' || ''}}${{matrix.linkRuntime == true && '-linked-runtime' || ''}}
 
     steps:
     - name: Checkout
@@ -38,7 +44,7 @@ jobs:
       shell: cmd
       working-directory: ImageMagick-Windows\Configure
       run: |
-        Configure.Release.x64.exe /noWizard /VS2022 /${{matrix.architecture}} /${{matrix.buildType}} /${{matrix.openmp}} ${{matrix.all == true && '/includeOptional /incompatibleLicense' || ''}}
+        Configure.Release.x64.exe /noWizard /VS2022 /${{matrix.architecture}} /${{matrix.buildType}} /${{matrix.openmp}} ${{matrix.all == true && '/includeOptional /incompatibleLicense' || ''}} ${{matrix.linkRuntime == true && '/linkRuntime' || ''}}
 
     - name: Build dependencies
       shell: cmd
