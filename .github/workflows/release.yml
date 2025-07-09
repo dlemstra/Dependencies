@@ -13,8 +13,8 @@ jobs:
         architecture: [ x64, arm64, x86 ]
         buildType: [ dynamic, static ]
         openmp: [ openMP, noOpenMP ]
-        linkRuntime: [ true, false ]
         all: [ false, true ]
+        linkRuntime: [ false, true ]
         exclude:
           - buildType: dynamic
             linkRuntime: true
