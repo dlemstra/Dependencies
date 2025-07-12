@@ -19,4 +19,4 @@ jobs:
 
     - name: Check releases
       shell: cmd
-      run: CheckReleases.cmd
+      run: check-releases.cmd
