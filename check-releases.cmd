@@ -10,4 +10,4 @@ BASH% -c "./CloneRepositories.sh --clone-dependencies"
 
 cd ..
 
-BASH% -c "./CheckReleases.sh"
+BASH% -c "./check-releases.sh"
