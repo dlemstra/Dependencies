@@ -1,2 +1,8 @@
+.vs
 /Artifacts
-/ImageMagick-Windows
+/Configure
+/Dependencies
+/OptionalDependencies
+/ProjectFiles
+
+*.sln

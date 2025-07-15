@@ -1,13 +1,5 @@
 @echo off
 
-git clone --branch new-config https://github.com/ImageMagick/ImageMagick-Windows
-
-cd ImageMagick-Windows
-
-call Build\FindBash.cmd
-
-BASH% -c "./CloneRepositories.sh --clone-dependencies"
-
-cd ..
+call .github\build\find-bash.cmd
 
 BASH% -c "./check-releases.sh"
